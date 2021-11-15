@@ -1,0 +1,106 @@
+<?php
+    $showsuccess = false;
+    $showerror = false;
+    if($_SERVER["REQUEST_METHOD"] == "POST"){
+        require "element/_connect.php";
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        $cpassword = $_POST['cpassword'];
+        
+        $existsql = "SELECT * FROM  `user` WHERE username = '$username'";
+        $result = mysqli_query($connect, $existsql);
+        $existsrow = mysqli_num_rows($result);
+        if($existsrow > 0){
+            $showerror = "user already exists";
+        }
+        else{
+        
+        if(($password == $cpassword)){
+            $hashpwd = password_hash($password , PASSWORD_DEFAULT);
+            $sql = "INSERT INTO `user` (`username`, `password`, `dt`) VALUES ('$username', '$hashpwd', current_timestamp());";
+            // $result = mysqli_query($connect , $sql);
+            $result = mysqli_query($connect, $sql);
+            if($result){
+                $showsuccess = true;
+            }
+        }
+        else{
+            $showerror = "Passwords do not match";
+        }
+    }
+}
+?>
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <title>Code_liner</title>
+</head>
+
+<body>
+    <?php
+    require "element/_nav.php";
+    ?>
+    <?php
+
+        if($showsuccess){
+            echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Success</strong>   your data submited
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>';
+        }
+
+    ?>
+    <?php
+
+if($showerror){
+    echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Error!</strong> '.$showerror.'
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>';
+}
+
+?>
+    <div class="container my-4">
+        <h1 class="text-center">Signup to our website</h1>
+        <form action="/login/signup.php" method="POST">
+            <div class="form-group">
+                <label for="username" class="p-1">Username</label>
+                <input type="text" class="form-control" id="username" name="username" aria-describedby="emailHelp">
+
+            </div>
+            <div class="form-group">
+                <label for="password" class="p-1">Password</label>
+                <input type="password" class="form-control" id="password" name="password">
+            </div>
+            <div class="form-group ">
+                <label for="cpassword" class="p-1">Confirm Password</label>
+                <input type="password" class="form-control" id="cpassword" name="cpassword">
+                <small id="" class="form-text text-muted">Make sure to type the same password</small>
+            </div>
+            <button type="submit" class="btn btn-primary my-2 ">SignUp</button>
+        </form>
+        </div>
+        <!-- Optional JavaScript; choose one of the two! -->
+
+        <!-- Option 1: Bootstrap Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+            crossorigin="anonymous"></script>
+
+        <!-- Option 2: Separate Popper and Bootstrap JS -->
+        <!--
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+    -->
+</body>
+
+</html>
